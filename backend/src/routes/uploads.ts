@@ -8,7 +8,7 @@ import { authMiddleware, AuthRequest } from '../middleware/auth';
 
 const router = express.Router();
 
-// Utility function
+
 const ensureUploadDir = async (dirPath: string): Promise<void> => {
   try {
     await fs.access(dirPath);
