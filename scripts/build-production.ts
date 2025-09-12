@@ -81,5 +81,3 @@ buildProduction(); Deploy WelltickToken
   await welltickToken.waitForDeployment();
   const tokenAddress = await welltickToken.getAddress();
   console.log("✅ WelltickToken deployed to:", tokenAddress);
-
-  //
