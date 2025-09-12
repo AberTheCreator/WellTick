@@ -257,3 +257,12 @@ export const initializeDatabase = async () => {
 };
 
 export { sequelize };
+export const createTables = async () => {
+  try {
+    await sequelize.sync({ force: false, alter: true });
+    console.log('All tables created successfully');
+  } catch (error) {
+    console.error('Error creating tables:', error);
+    throw error;
+  }
+};
