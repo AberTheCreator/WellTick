@@ -130,7 +130,7 @@ const Earn: React.FC = () => {
           
           
           if (stepCount >= dailyGoal.target && stepCount - 1 < dailyGoal.target) {
-            // Goal achieved!
+            
             earnTokens('daily_check', 'Completed daily step goal', 100);
           }
         }
@@ -157,7 +157,7 @@ const Earn: React.FC = () => {
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8f9fa', paddingBottom: '80px' }}>
-      {/* Header */}
+      
       <div style={{
         padding: '16px',
         background: 'white',
