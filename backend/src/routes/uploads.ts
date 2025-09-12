@@ -5,15 +5,23 @@ import fs from 'fs/promises';
 import sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
-import { ensureUploadDir } from '../utils/file';
 
 const router = express.Router();
+
+// Utility function
+const ensureUploadDir = async (dirPath: string): Promise<void> => {
+  try {
+    await fs.access(dirPath);
+  } catch {
+    await fs.mkdir(dirPath, { recursive: true });
+  }
+};
 
 const storage = multer.memoryStorage();
 const upload = multer({
   storage,
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
+    fileSize: 10 * 1024 * 1024, 
   },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif|webp|mp4|mov|avi|wav|mp3|m4a/;
@@ -27,7 +35,6 @@ const upload = multer({
     }
   },
 });
-
 
 router.post('/image', authMiddleware, upload.single('image'), async (req: AuthRequest, res) => {
   try {
@@ -58,7 +65,6 @@ router.post('/image', authMiddleware, upload.single('image'), async (req: AuthRe
     res.status(500).json({ error: 'Failed to upload image' });
   }
 });
-
 
 router.post('/audio', authMiddleware, upload.single('audio'), async (req: AuthRequest, res) => {
   try {
@@ -114,7 +120,6 @@ router.post('/video', authMiddleware, upload.single('video'), async (req: AuthRe
     res.status(500).json({ error: 'Failed to upload video' });
   }
 });
-
 
 router.delete('/:filename', authMiddleware, async (req: AuthRequest, res) => {
   try {
