@@ -107,6 +107,7 @@ app.use('/api/settings', authMiddleware, settingsRoutes);
 app.use('/api/web3', web3Routes);
 app.use('/api/health', healthRoutes);
 app.use('/api/upload', authMiddleware, uploadRoutes);
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use(notFoundHandler);
 app.use(errorHandler);
