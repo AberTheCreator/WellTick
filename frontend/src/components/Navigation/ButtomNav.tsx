@@ -6,6 +6,7 @@ import PlacesIcon from '../../assets/icons/places.svg';
 import EmergencyIcon from '../../assets/icons/emergency.svg';
 import AssistantIcon from '../../assets/icons/assistant.svg';
 import DynamicIcon from '../Shared/DynamicIcon';
+
 <DynamicIcon 
   name={item.iconName} 
   isActive={isActive}
