@@ -4,16 +4,18 @@ import './styles/fonts.css';
 import { getTheme, ThemeMode } from './theme/theme';
 import BottomNav from './components/Navigation/BottomNav';
 import HamburgerMenu from './components/Navigation/HamburgerMenu';
-import NotificationIcon from './components/Header/NotificationIcon';
-import SettingsIcon from './components/Header/SettingsIcon';
-import DailyTipsBar from './components/Header/DailyTipsBar';
+import NotificationIcon from './components/NotificationIcon';
+import SettingsIcon from './components/SettingsIcon';
+import DailyTipsBar from './components/DailyTipsBar';
 import EmergencyButton from './components/Emergency/EmergencyButton';
+
 import Home from './pages/Home';
 import Assistant from './pages/Assistant';
 import Places from './pages/Places';
 import Community from './pages/Community';
 import Earn from './pages/Earn';
 import RehabGaming from './pages/RehabGaming';
+import Emergency from './pages/Emergency';
 
 interface AppSettings {
   themeMode: ThemeMode;
