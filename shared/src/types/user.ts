@@ -1,3 +1,5 @@
+import { UserPreferences } from "./preferences";
+
 export interface User {
   id: string;
   email: string;
