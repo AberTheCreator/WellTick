@@ -12,6 +12,14 @@ async function main() {
   const balance = await deployer.provider.getBalance(deployer.address);
   console.log("💰 Account balance:", ethers.formatEther(balance), "ETH");
 
+  
+  console.log("\n📄 Deploying WelltickToken...");
+  const WelltickToken = await ethers.getContractFactory("WelltickToken");
+  const welltickToken = await WelltickToken.deploy();
+  await welltickToken.waitForDeployment();
+  const tokenAddress = await welltickToken.getAddress();
+  console.log("✅ WelltickToken deployed to:", tokenAddress);
+
   console.log("\n📄 Deploying WelltickIdentity...");
   const WelltickIdentity = await ethers.getContractFactory("WelltickIdentity");
   const welltickIdentity = await WelltickIdentity.deploy();
@@ -75,5 +83,3 @@ main()
     console.error("❌ Deployment failed:", error);
     process.exit(1);
   });
-
-
