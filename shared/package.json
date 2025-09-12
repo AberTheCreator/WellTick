@@ -1,0 +1,17 @@
+{
+    "name": "welltick-shared",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "scripts": {
+      "build": "tsc",
+      "dev": "tsc -w"
+    },
+    "dependencies": {
+      "zod": "^3.22.0",
+      "ethers": "^6.8.0"
+    },
+    "devDependencies": {
+      "typescript": "^5.2.2"
+    }
+  }
+}
