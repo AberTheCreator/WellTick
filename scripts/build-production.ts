@@ -16,10 +16,10 @@ const runCommand = (command: string, cwd?: string) => {
 };
 
 async function buildProduction() {
-  console.log(" Building Welltick for production...\n");
+  console.log("🚀 Building Welltick for production...\n");
 
   try {
-    
+    // Clean previous builds
     console.log("🧹 Cleaning previous builds...");
     ['backend/dist', 'frontend/build', 'shared/dist'].forEach(dir => {
       if (fs.existsSync(dir)) {
@@ -29,19 +29,19 @@ async function buildProduction() {
     });
 
     
-    console.log("\n Building shared types...");
+    console.log("\n📦 Building shared types...");
     runCommand('npm run build', 'shared');
 
     
-    console.log("\n Building backend...");
+    console.log("\n🔧 Building backend...");
     runCommand('npm run build', 'backend');
 
     
-    console.log("\n Building frontend...");
+    console.log("\n🎨 Building frontend...");
     runCommand('npm run build', 'frontend');
 
     
-    console.log("\n Compiling smart contracts...");
+    console.log("\n📄 Compiling smart contracts...");
     runCommand('npm run compile', 'contracts');
 
     const packageInfo = {
@@ -60,7 +60,7 @@ async function buildProduction() {
     fs.writeFileSync('build-info.json', JSON.stringify(packageInfo, null, 2));
 
     console.log("\n✅ Production build completed successfully!");
-    console.log("\n Build artifacts:");
+    console.log("\n📦 Build artifacts:");
     console.log("- Frontend: ./frontend/build/");
     console.log("- Backend: ./backend/dist/");
     console.log("- Contracts: ./contracts/artifacts/");
@@ -74,10 +74,4 @@ async function buildProduction() {
   }
 }
 
-buildProduction(); Deploy WelltickToken
-  console.log("\n📄 Deploying WelltickToken...");
-  const WelltickToken = await ethers.getContractFactory("WelltickToken");
-  const welltickToken = await WelltickToken.deploy();
-  await welltickToken.waitForDeployment();
-  const tokenAddress = await welltickToken.getAddress();
-  console.log("✅ WelltickToken deployed to:", tokenAddress);
+buildProduction();
