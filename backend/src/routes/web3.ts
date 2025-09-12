@@ -22,14 +22,21 @@ const contract = new ethers.Contract(
   wallet
 );
 
-const ipfs = createIPFS({ 
-  host: 'ipfs.infura.io', 
-  port: 5001, 
-  protocol: 'https',
-  headers: {
-    authorization: `Basic ${Buffer.from(`${process.env.INFURA_IPFS_PROJECT_ID}:${process.env.INFURA_IPFS_SECRET}`).toString('base64')}`
-  }
-});
+let ipfs: any = null;
+try {
+  ipfs = createIPFS({ 
+    host: 'ipfs.infura.io', 
+    port: 5001, 
+    protocol: 'https',
+    headers: {
+      authorization: process.env.INFURA_IPFS_PROJECT_ID ? 
+        `Basic ${Buffer.from(`${process.env.INFURA_IPFS_PROJECT_ID}:${process.env.INFURA_IPFS_SECRET}`).toString('base64')}` : 
+        ''
+    }
+  });
+} catch (error) {
+  console.warn('IPFS initialization failed:', error);
+}
 
 router.post('/connect-wallet', authMiddleware, async (req: AuthRequest, res) => {
   try {
@@ -77,3 +84,92 @@ router.post('/mint-credential', authMiddleware, async (req: AuthRequest, res) =>
       name: 'Welltick Accessibility Credential',
       description: 'Verified accessibility and wellness credential',
       image: 'https://welltick.com/credential-badge.png',
+      attributes: [
+        {
+          trait_type: 'Accessibility Needs',
+          value: accessibilityNeeds.join(', ')
+        },
+        {
+          trait_type: 'Verified',
+          value: user.get('isVerified')
+        },
+        {
+          trait_type: 'Issue Date',
+          value: new Date().toISOString()
+        }
+      ]
+    };
+
+    let metadataURI = '';
+    
+    if (ipfs) {
+      try {
+        const result = await ipfs.add(JSON.stringify(metadata));
+        metadataURI = `ipfs://${result.path}`;
+      } catch (ipfsError) {
+        console.warn('IPFS upload failed:', ipfsError);
+        metadataURI = `data:application/json,${encodeURIComponent(JSON.stringify(metadata))}`;
+      }
+    } else {
+      metadataURI = `data:application/json,${encodeURIComponent(JSON.stringify(metadata))}`;
+    }
+
+    if (process.env.CONTRACT_ADDRESS && process.env.PRIVATE_KEY) {
+      const tx = await contract.mintCredential(walletAddress, metadataURI);
+      await tx.wait();
+
+      res.json({
+        success: true,
+        transactionHash: tx.hash,
+        metadataURI,
+        message: 'Accessibility credential minted successfully'
+      });
+    } else {
+      res.json({
+        success: true,
+        metadataURI,
+        message: 'Credential created (contracts not deployed)',
+        mockMode: true
+      });
+    }
+  } catch (error) {
+    console.error('Mint credential error:', error);
+    res.status(500).json({ error: 'Failed to mint credential' });
+  }
+});
+
+router.get('/credentials/:address', async (req, res) => {
+  try {
+    const { address } = req.params;
+    
+    if (!process.env.CONTRACT_ADDRESS) {
+      return res.json({
+        success: true,
+        credentials: [],
+        message: 'Contracts not deployed'
+      });
+    }
+
+    const balance = await contract.balanceOf(address);
+    const credentials = [];
+
+    for (let i = 0; i < balance; i++) {
+      const tokenId = await contract.tokenOfOwnerByIndex(address, i);
+      const metadataURI = await contract.getMetadataURI(address);
+      credentials.push({
+        tokenId: tokenId.toString(),
+        metadataURI
+      });
+    }
+
+    res.json({
+      success: true,
+      credentials
+    });
+  } catch (error) {
+    console.error('Get credentials error:', error);
+    res.status(500).json({ error: 'Failed to fetch credentials' });
+  }
+});
+
+export default router;
