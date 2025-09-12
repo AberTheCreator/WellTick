@@ -14,6 +14,9 @@ interface AIRequest {
   data?: string;
 }
 
+
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+
 router.post('/chat', async (req, res) => {
   try {
     const { messages, type = 'chat', data }: AIRequest = req.body;
@@ -30,22 +33,29 @@ router.post('/chat', async (req, res) => {
         systemPrompt = 'You are Welltick AI, an accessibility and wellness assistant. Help users with disabilities navigate their daily lives with empathy and practical solutions.';
     }
 
-    const aiMessages: AIMessage[] = [
-      { role: 'system', content: systemPrompt },
-      ...messages
-    ];
+    
+    const geminiMessages = messages.map(msg => ({
+      role: msg.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: msg.content }]
+    }));
 
-    const response = await fetch(process.env.AI_API_URL!, {
+    
+    geminiMessages.unshift({
+      role: 'user',
+      parts: [{ text: systemPrompt }]
+    });
+
+    const response = await fetch(`${GEMINI_API_URL}?key=${process.env.AI_API_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.AI_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'gpt-4',
-        messages: aiMessages,
-        max_tokens: 1000,
-        temperature: 0.7
+        contents: geminiMessages,
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 1000,
+        }
       })
     });
 
@@ -55,9 +65,11 @@ router.post('/chat', async (req, res) => {
       throw new Error(aiResponse.error?.message || 'AI service error');
     }
 
+    const responseText = aiResponse.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I could not process your request.';
+
     res.json({
-      message: aiResponse.choices[0].message.content,
-      usage: aiResponse.usage
+      message: responseText,
+      usage: aiResponse.usageMetadata
     });
   } catch (error) {
     console.error('AI Chat Error:', error);
@@ -65,89 +77,60 @@ router.post('/chat', async (req, res) => {
   }
 });
 
-router.post('/speech-to-text', async (req, res) => {
-  try {
-    const { audioData } = req.body;
-    
-    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.AI_API_KEY}`
-      },
-      body: audioData
-    });
-
-    const result = await response.json();
-    res.json({ text: result.text });
-  } catch (error) {
-    console.error('Speech-to-text error:', error);
-    res.status(500).json({ error: 'Speech recognition failed' });
-  }
-});
-
-router.post('/text-to-speech', async (req, res) => {
-  try {
-    const { text, voice = 'alloy' } = req.body;
-    
-    const response = await fetch('https://api.openai.com/v1/audio/speech', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.AI_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'tts-1',
-        input: text,
-        voice: voice
-      })
-    });
-
-    const audioBuffer = await response.buffer();
-    res.set({
-      'Content-Type': 'audio/mpeg',
-      'Content-Length': audioBuffer.length
-    });
-    res.send(audioBuffer);
-  } catch (error) {
-    console.error('Text-to-speech error:', error);
-    res.status(500).json({ error: 'Text-to-speech failed' });
-  }
-});
-
 router.post('/analyze-emotion', async (req, res) => {
   try {
     const { text } = req.body;
     
-    const response = await fetch(process.env.AI_API_URL!, {
+    const response = await fetch(`${GEMINI_API_URL}?key=${process.env.AI_API_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.AI_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'gpt-4',
-        messages: [
-          {
-            role: 'system',
-            content: 'Analyze the emotional tone of the following text and provide wellness recommendations. Return JSON with: emotion, confidence, recommendations, and supportive_message.'
-          },
-          {
-            role: 'user',
-            content: text
-          }
-        ],
-        max_tokens: 500
+        contents: [{
+          role: 'user',
+          parts: [{
+            text: `Analyze the emotional tone of the following text and provide wellness recommendations. Return JSON with: emotion, confidence, recommendations, and supportive_message. Text: "${text}"`
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.3,
+          maxOutputTokens: 500,
+        }
       })
     });
 
     const result = await response.json();
-    const analysis = JSON.parse(result.choices[0].message.content);
+    const analysisText = result.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
     
-    res.json(analysis);
+    try {
+      const analysis = JSON.parse(analysisText);
+      res.json(analysis);
+    } catch (parseError) {
+      
+      res.json({
+        emotion: 'neutral',
+        confidence: 0.5,
+        recommendations: ['Continue engaging with the community'],
+        supportive_message: 'Thank you for sharing. How can I help you today?'
+      });
+    }
   } catch (error) {
     console.error('Emotion analysis error:', error);
     res.status(500).json({ error: 'Emotion analysis failed' });
   }
+});
+
+router.post('/speech-to-text', async (req, res) => {
+  res.status(501).json({ 
+    error: 'Speech-to-text not implemented yet. Use Google Cloud Speech API.' 
+  });
+});
+
+router.post('/text-to-speech', async (req, res) => {
+  res.status(501).json({ 
+    error: 'Text-to-speech not implemented yet. Use Google Cloud Text-to-Speech API.' 
+  });
 });
 
 export default router;
