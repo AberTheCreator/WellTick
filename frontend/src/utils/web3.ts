@@ -1,4 +1,10 @@
-import { Web3Config } from '../../../shared/src/types/web3';
+export interface Web3Config {
+  contractAddress: string;
+  rpcUrl: string;
+  chainId: number;
+  chainName: string;
+  explorerUrl: string;
+}
 
 export const NETWORKS = {
   amoy: {
@@ -164,7 +170,7 @@ export const onChainChanged = (callback: (chainId: string) => void) => {
 
 export const removeAllListeners = () => {
   if (isMetaMaskInstalled()) {
-    window.ethereum!.removeAllListeners();
+    window.ethereum!.removeAllListeners?.();
   }
 };
 
