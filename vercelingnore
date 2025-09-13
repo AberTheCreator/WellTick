@@ -1,0 +1,8 @@
+backend/
+contracts/
+shared/
+scripts/
+*.md
+.env
+node_modules/
+package-lock.json
