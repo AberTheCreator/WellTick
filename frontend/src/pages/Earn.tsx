@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useWeb3 } from '../contexts/Web3Context';
 
 interface Activity {
   id: number;
