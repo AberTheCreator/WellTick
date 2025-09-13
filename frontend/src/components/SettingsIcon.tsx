@@ -9,38 +9,26 @@ interface Settings {
   screenReader: boolean;
 }
 
-const SettingsIcon: React.FC = () => {
+interface SettingsIconProps {
+  settings: any;
+  onUpdateSettings: (settings: any) => void;
+}
+
+const SettingsIcon: React.FC<SettingsIconProps> = ({ settings, onUpdateSettings }) => {
   const [showSettings, setShowSettings] = useState(false);
-  const [settings, setSettings] = useState<Settings>({
-    colorInversion: false,
-    fontSize: 'medium',
-    highContrast: false,
-    reducedMotion: false,
-    voiceSpeed: 1,
-    screenReader: false
-  });
 
   const updateSetting = async <K extends keyof Settings>(
     key: K, 
     value: Settings[K]
   ) => {
     const newSettings = { ...settings, [key]: value };
-    setSettings(newSettings);
+    onUpdateSettings(newSettings);
     
-    try {
-      await fetch('/api/settings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newSettings)
-      });
-      
-      applySettings(newSettings);
-    } catch (error) {
-      console.error('Failed to save settings:', error);
-    }
+    
+    applySettings(newSettings);
   };
 
-  const applySettings = (settings: Settings) => {
+  const applySettings = (settings: any) => {
     const root = document.documentElement;
     
     if (settings.colorInversion) {
@@ -60,7 +48,7 @@ const SettingsIcon: React.FC = () => {
       'medium': '16px',
       'large': '18px',
       'extra-large': '22px'
-    }[settings.fontSize];
+    }[settings.fontSize] || '16px';
     
     if (settings.reducedMotion) {
       root.style.setProperty('--animation-duration', '0s');
@@ -81,39 +69,34 @@ const SettingsIcon: React.FC = () => {
         }}
         aria-label="Accessibility Settings"
       >
-        <img 
-          src="/assets/icons/settings.svg" 
-          alt="Settings" 
-          width={28}
-          style={{ filter: 'invert(0.3)' }}
-        />
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
       </button>
 
       {showSettings && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '100%',
-            right: 0,
-            background: 'white',
-            border: '1px solid #ddd',
-            borderRadius: '8px',
-            minWidth: '320px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-            zIndex: 1000
-          }}
-        >
+        <div style={{
+          position: 'absolute',
+          top: '100%',
+          right: 0,
+          background: 'white',
+          border: '1px solid #ddd',
+          borderRadius: '8px',
+          minWidth: '320px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          zIndex: 1000
+        }}>
           <div style={{ padding: '16px', borderBottom: '1px solid #eee' }}>
             <h3 style={{ margin: 0, fontSize: '16px' }}>Accessibility Settings</h3>
           </div>
           
           <div style={{ padding: '16px' }}>
-            {/* Color Inversion */}
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
                 <input
                   type="checkbox"
-                  checked={settings.colorInversion}
+                  checked={settings.colorInversion || false}
                   onChange={(e) => updateSetting('colorInversion', e.target.checked)}
                   style={{ marginRight: '8px' }}
                 />
@@ -121,14 +104,13 @@ const SettingsIcon: React.FC = () => {
               </label>
             </div>
 
-            
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'block', marginBottom: '4px' }}>
                 Font Size
               </label>
               <select
-                value={settings.fontSize}
-                onChange={(e) => updateSetting('fontSize', e.target.value as Settings['fontSize'])}
+                value={settings.fontSize || 'medium'}
+                onChange={(e) => updateSetting('fontSize', e.target.value)}
                 style={{
                   width: '100%',
                   padding: '8px',
@@ -143,12 +125,11 @@ const SettingsIcon: React.FC = () => {
               </select>
             </div>
 
-            
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
                 <input
                   type="checkbox"
-                  checked={settings.highContrast}
+                  checked={settings.highContrast || false}
                   onChange={(e) => updateSetting('highContrast', e.target.checked)}
                   style={{ marginRight: '8px' }}
                 />
@@ -156,45 +137,15 @@ const SettingsIcon: React.FC = () => {
               </label>
             </div>
 
-            {/* Reduced Motion */}
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
                 <input
                   type="checkbox"
-                  checked={settings.reducedMotion}
+                  checked={settings.reducedMotion || false}
                   onChange={(e) => updateSetting('reducedMotion', e.target.checked)}
                   style={{ marginRight: '8px' }}
                 />
                 <span>Reduce Motion</span>
-              </label>
-            </div>
-
-            
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', marginBottom: '4px' }}>
-                Voice Speed: {settings.voiceSpeed}x
-              </label>
-              <input
-                type="range"
-                min="0.5"
-                max="2"
-                step="0.1"
-                value={settings.voiceSpeed}
-                onChange={(e) => updateSetting('voiceSpeed', parseFloat(e.target.value))}
-                style={{ width: '100%' }}
-              />
-            </div>
-
-            
-            <div>
-              <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                <input
-                  type="checkbox"
-                  checked={settings.screenReader}
-                  onChange={(e) => updateSetting('screenReader', e.target.checked)}
-                  style={{ marginRight: '8px' }}
-                />
-                <span>Screen Reader Optimized</span>
               </label>
             </div>
           </div>
