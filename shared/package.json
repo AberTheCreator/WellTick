@@ -1,18 +1,19 @@
 {
-  "name": "welltick-shared",
+  "name": "@welltick/shared",
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc -w",
-    "test": "echo \"No tests for shared package\""
+    "dev": "tsc --watch",
+    "clean": "rimraf dist",
+    "test": "echo 'No tests specified'"
   },
   "dependencies": {
-    "zod": "^3.22.2",
-    "ethers": "^6.7.1"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "rimraf": "^5.0.5"
   }
 }
