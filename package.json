@@ -2,43 +2,29 @@
   "name": "welltick-monorepo",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "yarn@3.6.4",
   "workspaces": [
-    "frontend",
-    "backend",
-    "contracts",
-    "shared"
+    "packages/*"
   ],
-  "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=8.0.0"
-  },
   "scripts": {
-    "setup": "npm run clean && npm run install:all && npm run build:shared",
-    "clean": "rimraf node_modules frontend/node_modules backend/node_modules contracts/node_modules shared/node_modules && rimraf frontend/build backend/dist shared/dist",
-    "install:all": "npm install --legacy-peer-deps",
-    "build": "npm run build:shared && npm run build:backend && npm run build:frontend && npm run build:contracts",
-    "build:shared": "cd shared && npm run build",
-    "build:frontend": "cd frontend && npm run build",
-    "build:backend": "cd backend && npm run build",
-    "build:contracts": "cd contracts && npm run compile",
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "dev:frontend": "cd frontend && npm start",
-    "dev:backend": "cd backend && npm run dev",
-    "dev:contracts": "cd contracts && npx hardhat node",
-    "deploy:contracts": "cd contracts && npm run deploy",
-    "test": "npm run test:shared && npm run test:backend && npm run test:frontend && npm run test:contracts",
-    "test:shared": "cd shared && npm test",
-    "test:frontend": "cd frontend && npm test",
-    "test:backend": "cd backend && npm test",
-    "test:contracts": "cd contracts && npm test",
-    "lint": "npm run lint:frontend && npm run lint:backend",
-    "lint:frontend": "cd frontend && npx eslint src --ext .ts,.tsx",
-    "lint:backend": "cd backend && npx eslint src --ext .ts",
-    "start": "npm run build && concurrently \"cd backend && npm start\" \"cd frontend && npx serve -s build\""
+    "clean": "yarn workspaces foreach -A run clean && rimraf node_modules",
+    "build": "yarn workspace @welltick/shared build && yarn workspace @welltick/contracts compile && yarn workspace @welltick/backend build",
+    "build:frontend": "yarn workspace @welltick/frontend build",
+    "dev": "concurrently \"yarn workspace @welltick/backend dev\" \"yarn workspace @welltick/frontend start\"",
+    "dev:frontend": "yarn workspace @welltick/frontend start",
+    "dev:backend": "yarn workspace @welltick/backend dev",
+    "start": "yarn workspace @welltick/backend start",
+    "test": "yarn workspaces foreach -A run test",
+    "deploy:contracts": "yarn workspace @welltick/contracts deploy",
+    "setup": "yarn install && yarn build"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
-    "cross-env": "^7.0.3",
-    "rimraf": "^5.0.5"
+    "rimraf": "^5.0.5",
+    "typescript": "^5.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "yarn": ">=3.0.0"
   }
 }
