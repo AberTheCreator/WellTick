@@ -49,7 +49,7 @@ Welltick combines **4 revolutionary technologies** that have never been integrat
 
 ## **WHY NOW? WHY US?**
 
-### ⚡ **Perfect Storm of Opportunity**
+###  **Perfect Storm of Opportunity**
 
 1. **AI Revolution:** GPT/Gemini makes real accessibility AI possible for the first time
 2. **Web3 Maturity:** Blockchain can now handle real-world applications
@@ -58,28 +58,28 @@ Welltick combines **4 revolutionary technologies** that have never been integrat
 
 ### **Our Unique Advantage**
 
-We're not just developers. **We have families that are currently experiencing accessibility issues.** Our team includes people who understand the pain points intimately.
+We are not just developers. **We have families that are currently experiencing accessibility issues.** Our team includes people who understand the pain points intimately.
 
 **Result:** We built solutions that actually work, not what we think works.
 
 ---
 
-## **THE TECH STACK WE ARE WORKING ON**
+## **THE TECH STACK WE ARE WORKING WITH**
 
 ```
-🎨 Frontend: React 18 + TypeScript (Accessibility-first design)
-🔧 Backend: Node.js + Express (Real-time with Socket.io)
-🤖 AI Engine: Gemini AI + Custom ML models
-🔗 Blockchain: Polygon (99% lower fees than Ethereum)
-💾 Storage: IPFS (Decentralized health data)
-📱 Mobile: PWA (Works offline, installs like native app)
+Frontend: React 18 + TypeScript (Accessibility-first design)
+Backend: Node.js + Express (Real-time with Socket.io)
+AI Engine: Gemini AI + Custom ML models
+Blockchain: Polygon (99% lower fees than Ethereum)
+Storage: IPFS (Decentralized health data)
+Mobile: PWA (Works offline, installs like native app)
 ```
 
 **Why This Stack?**
-- ⚡ **FAST:** 2.3s load time average
-- 🔒 **SECURE:** End-to-end encryption for health data  
-- 💰 **CHEAP:** Blockchain transactions cost $0.001
-- ♿ **ACCESSIBLE:** WCAG 2.1 AAA compliant (highest standard)
+-  **FAST:** 2.3s load time average
+-  **SECURE:** End-to-end encryption for health data  
+-  **CHEAP:** Blockchain transactions cost $0.001
+-  **ACCESSIBLE:** WCAG 2.1 AAA compliant (highest standard)
 
 ---
 
