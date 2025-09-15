@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 const { execSync } = require('child_process');
 const fs = require('fs');
@@ -174,10 +173,10 @@ export default Places;`;
     }
   });
 
-  console.log('📦 Installing dependencies...');
+  console.log(' Installing dependencies...');
   runCommand('npm install --legacy-peer-deps');
 
-  console.log('🔨 Building shared types...');
+  console.log(' Building shared types...');
   runCommand('npm run build', 'shared');
 
   console.log('⚙️ Creating environment files...');
@@ -228,11 +227,11 @@ ETHERSCAN_API_KEY=your_etherscan_api_key_for_verification
   createFile('contracts/.env', contractsEnv);
 
   console.log('\n🎉 Setup completed successfully!');
-  console.log('\n📋 Next steps:');
+  console.log('\n Next steps:');
   console.log('1. Update .env files with your actual API keys');
   console.log('2. Start development: npm run dev');
   console.log('3. Deploy contracts: npm run deploy:contracts');
-  console.log('\n📚 Required API Keys:');
+  console.log('\n Required API Keys:');
   console.log('- Gemini API key for AI features');
   console.log('- Wallet private key for blockchain');
   console.log('- Google Maps API key (optional)');
