@@ -19,7 +19,7 @@ async function buildProduction() {
   console.log("🚀 Building Welltick for production...\n");
 
   try {
-    // Clean previous builds
+    
     console.log("🧹 Cleaning previous builds...");
     ['backend/dist', 'frontend/build', 'shared/dist'].forEach(dir => {
       if (fs.existsSync(dir)) {
@@ -29,7 +29,7 @@ async function buildProduction() {
     });
 
     
-    console.log("\n📦 Building shared types...");
+    console.log("\n Building shared types...");
     runCommand('npm run build', 'shared');
 
     
