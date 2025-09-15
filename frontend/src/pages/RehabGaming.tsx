@@ -114,7 +114,7 @@ const RehabGaming: React.FC = () => {
 
   const fetchUserProgress = async () => {
     try {
-      // Mock user progress data - in real app, fetch from blockchain
+      
       const mockScores: GameScore[] = [
         {
           gameId: 'hand-eye-coordination',
